@@ -1,0 +1,2 @@
+# Playcanvas-SettingManager
+
