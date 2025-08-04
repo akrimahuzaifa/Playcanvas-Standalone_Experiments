@@ -1,11 +1,21 @@
 import * as pc from 'playcanvas';
 
+const widthsPreset: number[] = [480, 720, 1280, 1920, 2560, 4096, 7680]; 
+const heightsPreset: number[] = [270, 480, 720, 1080, 1440, 2160, 4320]; 
+let currentResolutionIndex = 0;
+
 // create an application
 const canvas = document.getElementById('application') as HTMLCanvasElement;
 const app = new pc.Application(canvas);
-app.setCanvasResolution(pc.RESOLUTION_AUTO);
+
+var width: number = widthsPreset[currentResolutionIndex];
+var height: number = heightsPreset[currentResolutionIndex];
+
+app.setCanvasResolution(pc.RESOLUTION_FIXED, width, height);
 app.setCanvasFillMode(pc.FILLMODE_FILL_WINDOW);
 app.start();
+
+console.log('Current Resolution width:', app.graphicsDevice.width, 'Height: ', app.graphicsDevice.height);
 
 // create a camera
 const camera = new pc.Entity();
