@@ -30,3 +30,15 @@ app.root.addChild(box);
 
 // rotate the box
 app.on('update', (dt: number) => box.rotate(10 * dt, 20 * dt, 30 * dt));
+
+
+// ------ Custom render passes set up ------
+if (camera.camera) {
+  const cameraFrame = new pc.CameraFrame(app, camera.camera);
+  cameraFrame.rendering.sceneColorMap = true;
+  cameraFrame.update();
+  console.log("Camera Frame Render Target Scale Before:", cameraFrame.rendering.renderTargetScale);
+  cameraFrame.rendering.renderTargetScale = 0.2;
+  cameraFrame.update();
+  console.log("Camera Frame Render Target Scale After:", cameraFrame.rendering.renderTargetScale);
+}
