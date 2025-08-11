@@ -38,7 +38,18 @@ if (camera.camera) {
   cameraFrame.rendering.sceneColorMap = true;
   cameraFrame.update();
   console.log("Camera Frame Render Target Scale Before:", cameraFrame.rendering.renderTargetScale);
-  cameraFrame.rendering.renderTargetScale = 0.2;
+  cameraFrame.rendering.renderTargetScale = 0.1;
+  cameraFrame.rendering.samples = 1;
+
+// want the following mapping:
+// Samples	renderTargetScale
+// 1	        0.1
+// 2	        0.4
+// 3	        0.7
+// 4	        1.0
+// renderTargetScale: one of them scales the size of the texture the scene gets rendered to (scale)
+// Sameples: and one enables antialiasing using specified number of samples
+
   cameraFrame.update();
   console.log("Camera Frame Render Target Scale After:", cameraFrame.rendering.renderTargetScale);
 }
