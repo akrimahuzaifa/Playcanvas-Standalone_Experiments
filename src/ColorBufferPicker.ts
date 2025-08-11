@@ -47,7 +47,6 @@ export class ColorBufferPicker {
             `
         });
     }
-
     // Helper to collect all meshInstances and their original materials from an entity hierarchy
     private collectMeshInstances(entity: pc.Entity): { meshInstance: pc.MeshInstance, originalMaterial: pc.Material }[] {
         const result: { meshInstance: pc.MeshInstance, originalMaterial: pc.Material }[] = [];
@@ -64,11 +63,14 @@ export class ColorBufferPicker {
         return result;
     }
 
-    getWorldPos(event: pc.MouseEvent, camera: pc.Entity, target: pc.Entity, range: number = 200): pc.Vec3 | null {
-        if (!camera.camera || !target) return null;
+    getWorldPos(event: pc.MouseEvent, camera: pc.Entity, targets: pc.Entity[], range: number = 200): pc.Vec3 | null {
+        if (!camera.camera || !targets) return null;
 
-        // Collect all meshInstances in the target hierarchy
-        const meshData = this.collectMeshInstances(target);
+            // Collect all meshInstances from all targets
+        const meshData: { meshInstance: pc.MeshInstance, originalMaterial: pc.Material }[] = [];
+        for (const target of targets) {
+            meshData.push(...this.collectMeshInstances(target));
+        }
 
         if (meshData.length === 0) return null;
 

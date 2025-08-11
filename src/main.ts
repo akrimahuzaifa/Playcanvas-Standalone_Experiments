@@ -31,14 +31,15 @@ plane.addComponent('render', { type: 'plane' });
 plane.setLocalScale(300, 1, 200);
 app.root.addChild(plane);
 
-// Store reference to imported model
-let importedModel: pc.Entity | null = null;
+// Initialize MeasurementPresenter right away
+const measurementPresenter = new MeasurementPresenter(app, camera);
 
-// Track current measurement target (plane by default)
-let currentTarget: pc.Entity = plane;
-
-// Initialize Measurement Presenter (will update target later)
-let measurementPresenter: MeasurementPresenter | null = null;
+// Import model and set as measurement target
+importGltfModel(app, "/models/policestation.glb", "policestation.glb", (entity: pc.Entity) => {
+    measurementPresenter.addTarget(entity); // Add model first
+    measurementPresenter.addTarget(plane);  // Add plane second
+    console.log('Both plane and model are now measurement targets.');
+});
 
 // Keyboard shortcuts
 if (window) {
@@ -47,21 +48,14 @@ if (window) {
             measurementPresenter.clearMeasurements();
         }
         // Toggle target with T
-        if ((event.key === 't' || event.key === 'T') && measurementPresenter && importedModel) {
-            currentTarget = (currentTarget === plane) ? importedModel : plane;
-            measurementPresenter.setTarget(currentTarget);
-            console.log(`Measurement target switched to: ${currentTarget === plane ? "plane" : "model"}`);
-        }
+        // if ((event.key === 't' || event.key === 'T') && measurementPresenter && importedModel) {
+        //     currentTarget = (currentTarget === plane) ? importedModel : plane;
+        //     measurementPresenter.setTarget(currentTarget);
+        //     console.log(`Measurement target switched to: ${currentTarget === plane ? "plane" : "model"}`);
+        // }
     });
 }
 
-// Import model and set as measurement target
-importGltfModel(app, "/models/policestation.glb", "policestation.glb", (entity: pc.Entity) => {
-    importedModel = entity;
-    // Initialize MeasurementPresenter with the plane as the initial target
-    measurementPresenter = new MeasurementPresenter(app, camera, currentTarget);
-    // Optionally, you can notify the user how to switch targets
-    console.log('Press "T" to toggle measurement target between plane and model.');
-});
+
 
 app.start();

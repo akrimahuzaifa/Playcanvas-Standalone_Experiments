@@ -5,19 +5,23 @@ export class MeasurementPresenter {
     private app: pc.Application;
     private camera: pc.Entity;
     private picker: ColorBufferPicker;
-    private target: pc.Entity;
+    //private target: pc.Entity;
+    private targets: pc.Entity[] = [];
 
-    constructor(app: pc.Application, camera: pc.Entity, target: pc.Entity) {
+    constructor(app: pc.Application, camera: pc.Entity) {
         this.app = app;
         this.camera = camera;
-        this.target = target;
+        //this.target = target;
+        
         this.picker = new ColorBufferPicker(app, app.graphicsDevice.canvas, 400);
         
         this.setupMouseHandler();
     }
-
-    public setTarget(target: pc.Entity) {
-        this.target = target;
+    
+    public addTarget(entity: pc.Entity) {
+        if (this.targets.indexOf(entity) === -1) {
+            this.targets.push(entity);
+        }
     }
 
     private setupMouseHandler() {
@@ -29,8 +33,9 @@ export class MeasurementPresenter {
     }
 
     private handleMouseClick(event: pc.MouseEvent) {
-        const worldPos = this.picker.getWorldPos(event, this.camera, this.target, 400);
-        
+
+        const worldPos = this.picker.getWorldPos(event, this.camera, this.targets, 400);
+
         if (!worldPos) {
             console.log("🚫 You clicked outside the plane!");
             return;
