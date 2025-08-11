@@ -4,18 +4,21 @@ import { ColorBufferPicker } from './ColorBufferPicker';
 export class MeasurementPresenter {
     private app: pc.Application;
     private camera: pc.Entity;
-    private plane: pc.Entity;
     private picker: ColorBufferPicker;
+    private target: pc.Entity;
 
-    constructor(app: pc.Application, camera: pc.Entity, plane: pc.Entity) {
+    constructor(app: pc.Application, camera: pc.Entity, target: pc.Entity) {
         this.app = app;
         this.camera = camera;
-        this.plane = plane;
+        this.target = target;
         this.picker = new ColorBufferPicker(app, app.graphicsDevice.canvas, 400);
         
         this.setupMouseHandler();
     }
 
+    public setTarget(target: pc.Entity) {
+        this.target = target;
+    }
 
     private setupMouseHandler() {
         if (this.app.mouse) {
@@ -26,7 +29,7 @@ export class MeasurementPresenter {
     }
 
     private handleMouseClick(event: pc.MouseEvent) {
-        const worldPos = this.picker.getWorldPos(event, this.camera, this.plane, 400);
+        const worldPos = this.picker.getWorldPos(event, this.camera, this.target, 400);
         
         if (!worldPos) {
             console.log("🚫 You clicked outside the plane!");

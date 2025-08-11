@@ -4,12 +4,13 @@ import * as pc from "playcanvas";
  * Minimal GLTF importer for PlayCanvas.
  * Usage:
  *   import { importGltfModel } from "./ImportExportManager";
- *   importGltfModel(app, "/models/2CylinderEngine/2CylinderEngine.gltf", "2CylinderEngine.gltf");
+ *   importGltfModel(app, "/models/2CylinderEngine/2CylinderEngine.gltf", "2CylinderEngine.gltf", (entity) => { ... });
  */
 export function importGltfModel(
     app: pc.Application,
     url: string,
-    filename: string = "model.gltf"
+    filename: string = "model.gltf",
+    onLoaded?: (entity: pc.Entity) => void
 ): void {
     console.log(`Attempting to load GLTF from: ${url} as ${filename}`);
     app.assets.loadFromUrlAndFilename(url, filename, "container", (err, asset) => {
@@ -36,5 +37,9 @@ export function importGltfModel(
 
         app.root.addChild(entity);
         console.log("GLTF model loaded and added to scene:", entity.name);
+
+        if (onLoaded) {
+            onLoaded(entity);
+        }
     });
 }
