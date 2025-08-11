@@ -51,10 +51,22 @@ export class ColorBufferPicker {
     getWorldPos(event: pc.MouseEvent, camera: pc.Entity, target: pc.Entity, range: number = 200): pc.Vec3 | null {
         if (!camera.camera || !target.render) return null;
 
-        const origMat = target.render.material;
-        const origRT = camera.camera.renderTarget;
+        // Store original materials
+        let origMats: pc.Material[] = [];
+        let meshInstances: pc.MeshInstance[] = [];
 
-        target.render.material = this.shader;
+        if (target.render.meshInstances) {
+            // For imported models and complex entities
+            meshInstances = target.render.meshInstances;
+            origMats = meshInstances.map(mi => mi.material);
+            meshInstances.forEach(mi => mi.material = this.shader);
+        } else {
+            // For built-in primitives
+            origMats = [target.render.material];
+            target.render.material = this.shader;
+        }
+
+        const origRT = camera.camera.renderTarget;
         camera.camera.renderTarget = this.renderTarget;
         this.app.render();
 
@@ -69,7 +81,12 @@ export class ColorBufferPicker {
         gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
-        target.render.material = origMat;
+        // Restore original materials
+        if (meshInstances.length > 0) {
+            meshInstances.forEach((mi, i) => mi.material = origMats[i]);
+        } else {
+            target.render.material = origMats[0];
+        }
         camera.camera.renderTarget = origRT;
 
         if (pixel[3] === 0) return null;
