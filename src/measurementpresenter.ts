@@ -46,7 +46,7 @@ export class MeasurementPresenter {
         const sphere = new pc.Entity("ClickSphere");
         sphere.addComponent("render", { type: "sphere" });
         sphere.setLocalScale(2, 2, 2); // Increased size to be more visible
-        sphere.setPosition(position.x, 0, position.z); // Y = 0 (plane level) so sphere is half above/half below
+        sphere.setPosition(position.x, position.y, position.z); // Y = 0 (plane level) so sphere is half above/half below
         
         const material = new pc.StandardMaterial();
         material.diffuse = new pc.Color(1, 0, 0); // Red sphere

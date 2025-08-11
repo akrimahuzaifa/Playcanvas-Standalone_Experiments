@@ -48,22 +48,33 @@ export class ColorBufferPicker {
         });
     }
 
+    // Helper to collect all meshInstances and their original materials from an entity hierarchy
+    private collectMeshInstances(entity: pc.Entity): { meshInstance: pc.MeshInstance, originalMaterial: pc.Material }[] {
+        const result: { meshInstance: pc.MeshInstance, originalMaterial: pc.Material }[] = [];
+        if (entity.render && entity.render.meshInstances) {
+            for (const mi of entity.render.meshInstances) {
+                result.push({ meshInstance: mi, originalMaterial: mi.material });
+            }
+        }
+        for (const child of entity.children) {
+            if (child instanceof pc.Entity) {
+                result.push(...this.collectMeshInstances(child));
+            }
+        }
+        return result;
+    }
+
     getWorldPos(event: pc.MouseEvent, camera: pc.Entity, target: pc.Entity, range: number = 200): pc.Vec3 | null {
-        if (!camera.camera || !target.render) return null;
+        if (!camera.camera || !target) return null;
 
-        // Store original materials
-        let origMats: pc.Material[] = [];
-        let meshInstances: pc.MeshInstance[] = [];
+        // Collect all meshInstances in the target hierarchy
+        const meshData = this.collectMeshInstances(target);
 
-        if (target.render.meshInstances) {
-            // For imported models and complex entities
-            meshInstances = target.render.meshInstances;
-            origMats = meshInstances.map(mi => mi.material);
-            meshInstances.forEach(mi => mi.material = this.shader);
-        } else {
-            // For built-in primitives
-            origMats = [target.render.material];
-            target.render.material = this.shader;
+        if (meshData.length === 0) return null;
+
+        // Replace all materials with the picking shader
+        for (const { meshInstance } of meshData) {
+            meshInstance.material = this.shader;
         }
 
         const origRT = camera.camera.renderTarget;
@@ -72,20 +83,18 @@ export class ColorBufferPicker {
 
         const gl = (this.app.graphicsDevice as any).gl;
         gl.bindFramebuffer(gl.FRAMEBUFFER, (this.renderTarget as any)._glFrameBuffer);
-        
+
         const rect = this.canvas.getBoundingClientRect();
         const x = Math.floor((event.x - rect.left) * (this.colorBuffer.width / this.canvas.clientWidth));
         const y = Math.floor((this.canvas.clientHeight - (event.y - rect.top)) * (this.colorBuffer.height / this.canvas.clientHeight));
-        
+
         const pixel = new Uint8Array(4);
         gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
         // Restore original materials
-        if (meshInstances.length > 0) {
-            meshInstances.forEach((mi, i) => mi.material = origMats[i]);
-        } else {
-            target.render.material = origMats[0];
+        for (const { meshInstance, originalMaterial } of meshData) {
+            meshInstance.material = originalMaterial;
         }
         camera.camera.renderTarget = origRT;
 
