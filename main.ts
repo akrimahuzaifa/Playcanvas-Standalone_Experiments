@@ -13,7 +13,7 @@ const deviceTypeMap: Record<string, string> = {
 };
 
 // Load preference from localStorage or default to WebGL2
-const storedType = localStorage.getItem("deviceType") || "webgl2";
+const storedType = localStorage.getItem("deviceType") || pc.DEVICETYPE_WEBGL2;
 deviceSelect.value = storedType;
 
 // Listen for changes and reload page with new preference

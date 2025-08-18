@@ -41,8 +41,8 @@ export class InputPresenter {
       backward: "KeyS",
       left: "KeyA",
       right: "KeyD",
-      up: "Space",
-      down: "ControlLeft",
+      up: "KeyQ",
+      down: "KeyE",
       speedFast: "ShiftLeft",
     };
   }
