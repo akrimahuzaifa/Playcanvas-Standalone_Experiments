@@ -3,10 +3,30 @@ import * as pc from 'playcanvas';
 // create an application
 const canvas = document.getElementById('application') as HTMLCanvasElement;
 
-const gfxOptions = {
-  deviceTypes: [pc.DEVICETYPE_WEBGPU, pc.DEVICETYPE_WEBGL2],
-  antialias: false,
+const deviceSelect = document.getElementById("device-select") as HTMLSelectElement;
+
+// Device type mapping
+const deviceTypeMap: Record<string, string> = {
+  webgl2: pc.DEVICETYPE_WEBGL2,
+  webgpu: pc.DEVICETYPE_WEBGPU,
 };
+
+// Load preference from localStorage or default to WebGL2
+const storedType = localStorage.getItem("deviceType") || "webgl2";
+deviceSelect.value = storedType;
+
+// Listen for changes and reload page with new preference
+deviceSelect.addEventListener("change", () => {
+  localStorage.setItem("deviceType", deviceSelect.value);
+  window.location.reload();
+});
+
+// Use selected device type for initialization
+const gfxOptions = {
+  deviceTypes: [deviceTypeMap[deviceSelect.value]],
+  antialias: true,
+};
+
 
 const device = await pc.createGraphicsDevice(canvas, gfxOptions);
 console.log("Graphics Device:", device);
