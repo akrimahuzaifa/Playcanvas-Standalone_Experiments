@@ -4,9 +4,14 @@
         <meta charset="utf-8">
         <style>
             body { margin: 0; overflow: hidden; }
+            #device-select { position: absolute; top: 10px; left: 10px; z-index: 10; }
         </style>
     </head>
     <body>
+        <select id="device-select">
+            <option value="webgl2">WebGL2</option>
+            <option value="webgpu">WebGPU</option>
+        </select>
         <script type="module" src="main.ts"></script>
         <canvas id='application'></canvas>
     </body>
