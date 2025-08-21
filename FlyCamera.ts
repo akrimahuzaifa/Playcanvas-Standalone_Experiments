@@ -77,6 +77,7 @@ export class FlyCamera {
     this.zoomSpeed = zoomSpeed;
     this.input = input;
     this.app.on("update", this.update, this);
+    console.log("FlyCamera initialized");
   }
 
   public update(dt: number): void {
