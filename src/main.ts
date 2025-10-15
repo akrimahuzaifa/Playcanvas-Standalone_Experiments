@@ -1,5 +1,5 @@
 import * as pc from 'playcanvas';
-import { MeasurementPresenter } from './measurementpresenter';
+import { MeasurementPresenter } from './measurement_tool/MeasurementPresenter';
 import { importGltfModel } from "./ImportExportManager";
 
 const canvas = document.getElementById('application-canvas') as HTMLCanvasElement;
@@ -28,11 +28,13 @@ app.root.addChild(light);
 // Plane
 const plane = new pc.Entity();
 plane.addComponent('render', { type: 'plane' });
-plane.setLocalScale(300, 1, 200);
+//plane.addComponent("collision", { type: "box", halfExtents: new pc.Vec3(200, 0.1, 200) });
+//plane.addComponent('rigidbody', { type: 'static' });
+plane.setLocalScale(200, 1, 200);
 app.root.addChild(plane);
 
 // Initialize MeasurementPresenter right away
-const measurementPresenter = new MeasurementPresenter(app, camera);
+const measurementPresenter = new MeasurementPresenter(app, camera, plane);
 
 // Import model and set as measurement target
 importGltfModel(app, "/models/policestation.glb", "policestation.glb", (entity: pc.Entity) => {

@@ -1,5 +1,5 @@
 import * as pc from 'playcanvas';
-import { ColorBufferPicker } from './ColorBufferPicker';
+import { ColorBufferPicker } from './utils/ColorBufferPicker';
 
 export class MeasurementPresenter {
     private app: pc.Application;

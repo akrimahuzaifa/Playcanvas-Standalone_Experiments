@@ -1,0 +1,40 @@
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        canvas {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+
+        /* UI container for manager toggles */
+        #managersUI {
+
+            color: #fff;
+            padding: 8px;
+            border-radius: 4px;
+            font-family: sans-serif;
+            font-size: 14px;
+        }
+
+        #importExportUI {
+
+            color: #fff;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: sans-serif;
+            font-size: 14px;
+
+        }
+
+        #userInterface {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.4);
+            margin: 0px 0px 0px 0px;
+            width: 450px;
+
+        }
