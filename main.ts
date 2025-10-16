@@ -1,4 +1,6 @@
 import * as pc from 'playcanvas';
+import { FlyCamera } from './camera/FlyCamera';
+import { WalkCamera } from './camera/WalkCamera';
 
 // create an application
 const canvas = document.getElementById('application') as HTMLCanvasElement;
@@ -39,3 +41,14 @@ app.root.addChild(box);
 
 // rotate the box
 app.on('update', (dt: number) => box.rotate(10 * dt, 20 * dt, 30 * dt));
+
+// Plane
+const plane = new pc.Entity("floor");
+plane.addComponent('render', { type: 'plane' });
+plane.addComponent("collision", { type: "box", halfExtents: new pc.Vec3(200, 0.1, 200) });
+plane.addComponent('rigidbody', { type: 'static' });
+plane.setLocalScale(200, 1, 200);
+app.root.addChild(plane);
+
+const fltcam = new FlyCamera(app, camera);
+//const walkCam = new WalkCamera(app, camera);
