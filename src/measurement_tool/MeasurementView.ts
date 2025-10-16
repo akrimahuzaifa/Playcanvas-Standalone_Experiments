@@ -16,7 +16,7 @@ export class MeasurementView extends EventTarget {
 
     // Pre-created materials for better performance
     private static readonly previewThickness = 0.03; // Change this value for desired thickness
-    private static readonly lineThickness = 0.03; // Try a larger value
+    private static readonly lineThickness = 1; // Try a larger value
 
     // Update materials to match UI colors
     private static readonly previewMaterial = (() => {
@@ -45,7 +45,8 @@ export class MeasurementView extends EventTarget {
     // Two-point measurement material - BLUE to match UI (#00557cff)
     private static readonly measurementMaterial = (() => {
         const mat = new pc.StandardMaterial();
-        mat.diffuse = new pc.Color(0, 0.333, 0.486); // Blue color matching UI (#00557c)
+        //mat.diffuse = new pc.Color(0, 0.333, 0.486); // Blue color matching UI (#00557c)
+        mat.diffuse = new pc.Color(1, 0, 0); // Bright red
         mat.update();
         return mat;
     })();
@@ -259,6 +260,8 @@ export class MeasurementView extends EventTarget {
     }
 
     public drawMeasurement(start: pc.Vec3, end: pc.Vec3, distance: number): void {
+        //start.y = 0;
+        //end.y = 0;
         const lineEntity = this.createLineEntity(
             `MeasurementLine ${this.count++} | ${distance.toFixed(2)}m`,
             start,
@@ -266,6 +269,8 @@ export class MeasurementView extends EventTarget {
             MeasurementView.lineThickness,
             MeasurementView.measurementMaterial // Blue for two-point
         );
+        console.log("Drawing line:", lineEntity.name);
+        console.log("material:", MeasurementView.measurementMaterial);
 
         // Store points for deletion identification
         (lineEntity as any).start = start.clone();
@@ -286,6 +291,8 @@ export class MeasurementView extends EventTarget {
         const lineColor = new pc.Color(0, 0.333, 0.486);
         // Store the text entity reference on the line entity
         (lineEntity as any).textEntity = this.create3DTextLabel(`${distance.toFixed(2)}m`, mid, lineColor, 0.2);
+
+        console.log('Drawing line from', start, 'to', end);
     }
 
     public drawPreviewLine(start: pc.Vec3, end: pc.Vec3): void {

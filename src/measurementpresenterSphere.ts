@@ -1,7 +1,7 @@
 import * as pc from 'playcanvas';
 import { ColorBufferPicker } from './utils/ColorBufferPicker';
 
-export class MeasurementPresenter {
+export class MeasurementPresenterSphere {
     private app: pc.Application;
     private camera: pc.Entity;
     private picker: ColorBufferPicker;
@@ -13,7 +13,7 @@ export class MeasurementPresenter {
         this.camera = camera;
         //this.target = target;
         
-        this.picker = new ColorBufferPicker(app, app.graphicsDevice.canvas, 400);
+        this.picker = new ColorBufferPicker(app, app.graphicsDevice.canvas);
         
         this.setupMouseHandler();
     }
@@ -27,6 +27,7 @@ export class MeasurementPresenter {
     private setupMouseHandler() {
         if (this.app.mouse) {
             this.app.mouse.on(pc.EVENT_MOUSEDOWN, (event: pc.MouseEvent) => {
+                if (event.button !== pc.MOUSEBUTTON_LEFT) return; // Only respond to left-clicks
                 this.handleMouseClick(event);
             });
         }
