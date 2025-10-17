@@ -23,10 +23,8 @@ export class WalkCamera {
         this.jumpForce = jumpForce;
 
         // Add collision and rigidbody if not present
-        if (!camera.collision) {
+        if (!camera.collision && !camera.rigidbody) {
             camera.addComponent('collision', { type: 'capsule', radius: 0.5, height: 1.8 });
-        }
-        if (!camera.rigidbody) {
             camera.addComponent('rigidbody', { type: 'dynamic', mass: 1 });
         }
 
@@ -47,7 +45,7 @@ export class WalkCamera {
         }
 
         // Prevent context menu on right click
-        //app.graphicsDevice.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+        app.graphicsDevice.canvas.addEventListener("contextmenu", (e) => e.preventDefault());
 
         app.on("update", this.update, this);
     }
@@ -99,24 +97,58 @@ export class WalkCamera {
         if (this.keys["KeyA"]) move.sub(right);
         if (this.keys["KeyD"]) move.add(right);
         
-        if (this.camera.collision && this.camera.rigidbody){
+        // If we have a physics rigidbody, use it for movement + jump
+        if (this.camera.rigidbody) {
+            console.log("Using physics for movement");
+            const vel = this.camera.rigidbody.linearVelocity.clone();
+
             if (move.lengthSq() > 0) {
                 move.normalize().mulScalar(speed);
-                // Set velocity, keep Y velocity for gravity/jump
-                const vel = this.camera.rigidbody.linearVelocity;
+                // preserve Y (gravity/jump) and set X/Z
                 this.camera.rigidbody.linearVelocity = new pc.Vec3(move.x, vel.y, move.z);
             } else {
-                // Only keep Y velocity if no input
-                const vel = this.camera.rigidbody.linearVelocity;
+                // optionally zero X/Z for tight control; leaving as-is lets friction / damping act
                 this.camera.rigidbody.linearVelocity = new pc.Vec3(0, vel.y, 0);
             }
-    
-            // Jump
+
+            // Jump using physics impulse
             if (this.keys["Space"] && this.grounded) {
+                // applyImpulse expects world-local impulse values
                 this.camera.rigidbody.applyImpulse(0, this.jumpForce, 0);
                 this.grounded = false;
+                console.log("Jump");
+            }
+        } else {
+            // fallback: non-physics movement (keep existing behavior if you intentionally don't want physics)
+            if (move.lengthSq() > 0) {
+                move.normalize().mulScalar(speed * dt);
+                this.camera.translate(move);
             }
         }
+
+        // if (move.lengthSq() > 0) {
+        //     move.normalize().mulScalar(speed * dt);
+        //     this.camera.translate(move);
+        // }
+
+        // // Simple ground check (Y <= 1)
+        // const pos = this.camera.getPosition();
+        // if (pos.y <= 1.01) {
+        //     this.grounded = true;
+        //     this.velocityY = 0;
+        //     this.camera.setPosition(pos.x, 1, pos.z);
+        // } else {
+        //     this.grounded = false;
+        //     this.velocityY -= 9.8 * dt; // gravity
+        //     this.camera.translate(0, this.velocityY * dt, 0);
+        // }
+
+        // // Jump
+        // if (this.keys["Space"] && this.grounded) {
+        //     console.log("Jump"); 
+        //     this.velocityY = this.jumpForce;
+        //     this.grounded = false;
+        // }
     };
 
     public destroy() {
