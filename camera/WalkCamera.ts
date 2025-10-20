@@ -14,7 +14,7 @@ export class WalkCamera {
     private grounded: boolean = false;
     private velocityY: number = 0;
 
-    constructor(app: pc.Application, camera: pc.Entity, moveSpeed = 5, lookSensitivity = 0.2, jumpForce = 300) {
+    constructor(app: pc.Application, camera: pc.Entity, moveSpeed = 5, lookSensitivity = 0.2, jumpForce = 10) {
         this.app = app;
         this.camera = camera;
         this.eulers = camera.getEulerAngles().clone();
@@ -99,7 +99,7 @@ export class WalkCamera {
         
         // If we have a physics rigidbody, use it for movement + jump
         if (this.camera.rigidbody) {
-            console.log("Using physics for movement");
+            //console.log("Using physics for movement");
             const vel = this.camera.rigidbody.linearVelocity.clone();
 
             if (move.lengthSq() > 0) {
@@ -157,13 +157,13 @@ export class WalkCamera {
     }
 
     private onCollisionStart = (result: any) => {
-        if (result.other && result.other.name === "floor") {
+        if (result.other) {
             this.grounded = true;
         }
     };
 
     private onCollisionEnd = (result: any) => {
-        if (result && result.name === "floor") {
+        if (result.other) {
             this.grounded = false;
         }
     };

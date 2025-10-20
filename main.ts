@@ -1,5 +1,6 @@
 import * as pc from 'playcanvas';
 import { FlyCamera } from './camera/FlyCamera';
+import { WalkCamera } from './camera/WalkCamera';
 
 // Point to your local ammo files
 pc.WasmModule.setConfig('Ammo', {
@@ -25,11 +26,12 @@ pc.WasmModule.getInstance('Ammo', (AmmoModule: any) => {
     app.mouse = new pc.Mouse(app.graphicsDevice.canvas);
   }
   app.mouse.disableContextMenu();
+  app.systems.rigidbody?.gravity.set(0, -18, 0); // Increased gravity for better jumping feel
 
   // Camera
   const camera = new pc.Entity('camera');
   camera.addComponent('camera', { clearColor: new pc.Color(0.2, 0.2, 0.2) });
-  camera.setPosition(0, 5, 10);
+  camera.setPosition(0, 5, 5);
   app.root.addChild(camera);
 
   // Light
@@ -38,37 +40,43 @@ pc.WasmModule.getInstance('Ammo', (AmmoModule: any) => {
   light.setEulerAngles(45, 0, 0);
   app.root.addChild(light);
 
-  // Ground
-  const ground = new pc.Entity('ground');
-  ground.addComponent('model', { type: 'box' });
-  ground.addComponent('collision', { type: 'box', halfExtents: new pc.Vec3(10, 0.5, 10) });
+
+  // ground
+  const ground = new pc.Entity("floor");
+  ground.addComponent('render', { type: 'plane' });
+  ground.addComponent("collision", { type: "box", halfExtents: new pc.Vec3(10, 0.5, 10) });
   ground.addComponent('rigidbody', { type: 'static' });
   ground.setLocalScale(10, 1, 10);
-//   const grayMaterial = new pc.StandardMaterial();
-//   grayMaterial.diffuse.set(0.5, 0.5, 0.5);
-//   grayMaterial.update();
-//   (ground.render as pc.RenderComponent).meshInstances.forEach(mi => mi.material = grayMaterial);
+
+  const material = new pc.StandardMaterial();
+  material.diffuse = new pc.Color(0, 1, 0); // Red
+  material.update();
+          
+  if (ground.render) {
+      ground.render.material = material;
+  }
   app.root.addChild(ground);
 
   // Falling box
   const box = new pc.Entity('box');
-  box.addComponent('model', { type: 'box' });
+  box.addComponent('render', { type: 'box' });
   box.addComponent('collision', { type: 'box', halfExtents: new pc.Vec3(0.5, 0.5, 0.5) });
   box.addComponent('rigidbody', { type: 'dynamic', mass: 1 });
   box.setPosition(0, 5, 0);
-
-  // 🎨 Make the cube red
-//   const redMaterial = new pc.StandardMaterial();
-//   redMaterial.diffuse.set(1, 0, 0);  // RGB (Red)
-//   redMaterial.update();
-//   (box.render as pc.RenderComponent).meshInstances.forEach(mi => mi.material = redMaterial);
-
+  const boxmaterial = new pc.StandardMaterial();
+  boxmaterial.diffuse = new pc.Color(1, 0, 0); // Red sphere
+  boxmaterial.update();
+        
+  if (box.render) {
+    box.render.material = boxmaterial;
+  }
   app.root.addChild(box);
 
   // Adjust on resize
   window.addEventListener('resize', () => app.resizeCanvas());
 
-  const flycam = new FlyCamera(app, camera);
+  //const flycam = new FlyCamera(app, camera);
+  const walkCam = new WalkCamera(app, camera);
 });
 
 
