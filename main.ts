@@ -226,3 +226,11 @@ async function applyGroundTexture(url: string) {
 
 // attempt to apply provided texture
 applyGroundTexture("/textures/ui_background.jpg");
+
+
+if (!app.mouse) {
+    app.mouse = new pc.Mouse(app.graphicsDevice.canvas);
+}
+app.mouse.disableContextMenu();
+// Adjust on resize
+window.addEventListener("resize", () => app.resizeCanvas());
