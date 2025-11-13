@@ -225,4 +225,4 @@ async function applyGroundTexture(url: string) {
 }
 
 // attempt to apply provided texture
-applyGroundTexture("/texture/ui_background.jpg");
+applyGroundTexture("/textures/ui_background.jpg");
